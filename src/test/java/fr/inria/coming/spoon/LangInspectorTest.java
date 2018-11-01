@@ -5,13 +5,14 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import org.json.simple.JSONObject;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import fr.inria.coming.spoon.patterns.GitRepository4Test;
+import fr.inria.sacha.coming.analyzer.LangInspector;
 import fr.inria.sacha.coming.analyzer.commitAnalyzer.LangAnalyzer;
 import fr.inria.sacha.coming.analyzer.commitAnalyzer.LangAnalyzer.CommitInfo;
 import fr.inria.sacha.coming.util.ConfigurationProperties;
@@ -21,8 +22,15 @@ import fr.inria.sacha.coming.util.ConfigurationProperties;
  * @author Matias Martinez
  *
  */
-@Ignore
+//@Ignore
 public class LangInspectorTest extends GitRepository4Test {
+
+	@Test
+	public void tesMaintLangInspectorTestRepo() throws IOException {
+
+		LangInspector.main(new String[] { this.repoPath, "master", "2" });
+		assertTrue((new File("./out" + File.separator + "repogit4testv0.json")).exists());
+	}
 
 	@Test
 	public void testLangInspectorTestRepo() {
