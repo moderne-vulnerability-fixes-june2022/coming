@@ -29,6 +29,6 @@ PREVIOUS_MAVEN_CENTRAL_VERSION=0
   # and incrementing it
 mvn versions:set -DnewVersion=1.$((PREVIOUS_MAVEN_CENTRAL_VERSION+1))
 echo "Starting deployment using maven deploy ..."
-  mvn -Prelease deploy --settings .buildscript/settings.xml -Dmaven.test.skip=true -Dgpg.passphrase=$PASSPHRASE
+  mvn -Prelease deploy --settings .buildscript/settings.xml -Dmaven.test.skip=true -Dgpg.passphrase=$GPG_PASSPHRASE
   echo "Well deployed!"
 
