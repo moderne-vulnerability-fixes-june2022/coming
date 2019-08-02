@@ -12,23 +12,21 @@ echo "Run deploy_to_maven"
 
 set -e
 
-
 echo "Deploying ..."
-
-  # made with "travis encrypt-file codesigning.asc -r SpoonLabs/coming --add"
-openssl version
+# made with "travis encrypt-file codesigning.asc -r SpoonLabs/coming --add"
 openssl aes-256-cbc -K $encrypted_a263e63e6aa6_key -iv $encrypted_a263e63e6aa6_iv -in  ./.buildscript/codesigning.asc.enc -out codesigning.asc -d
 echo "Before gpg"
 gpg2 --fast-import codesigning.asc
 echo "After gpg"
 
-  # getting the previous version on Maven Central
+# getting the previous version on Maven Central
 #  PREVIOUS_MAVEN_CENTRAL_VERSION=`curl "http://search.maven.org/solrsearch/select?q=a:gumtree-spoon-ast-diff+g:fr.inria.gforge.spoon.labs&rows=20&wt=json" | jq -r .response.docs[0].latestVersion | egrep -o "[0-9]+$"`
 PREVIOUS_MAVEN_CENTRAL_VERSION=0
 
-  # and incrementing it
+# and incrementing it
 mvn versions:set -DnewVersion=1.$((PREVIOUS_MAVEN_CENTRAL_VERSION+1))
+echo "do we have more than one secret key?"
+gpg2 --list-keys --keyid-format LONG
 echo "Starting deployment using maven deploy ..."
-  mvn -Prelease deploy --settings .buildscript/settings.xml -Dmaven.test.skip=true -Dpgp.skip-true -Dgpg.passphrase=$GPG_PASSPHRASE
-  echo "Well deployed!"
-
+mvn -Prelease deploy --settings .buildscript/settings.xml -Dmaven.test.skip=true -Dpgp.skip-true -Dgpg.passphrase=$GPG_PASSPHRASE
+echo "Well deployed!"
