@@ -28,8 +28,11 @@ mvn versions:set -DnewVersion=1.$((PREVIOUS_MAVEN_CENTRAL_VERSION+1))
 
 echo "do we have more than one secret key?"
 gpg2 --list-keys
-# gpg2 --delete-secret-keys 85BB5679C71866D7
-# gpg2 --delete-keys 3804BB82D39DC0E3
+echo "trying to delete keys ..."
+yes | gpg2 --delete-secret-keys C71866D7
+yes | gpg2 --delete-keys D39DC0E3
+echo "do we still have more than one secret key?"
+gpg2 --list-keys
 
 echo "Starting deployment using maven deploy ..."
 mvn -Prelease deploy --settings .buildscript/settings.xml -Dmaven.test.skip=true -Dpgp.skip-true -Dgpg.passphrase=$GPG_PASSPHRASE
