@@ -29,8 +29,8 @@ mvn versions:set -DnewVersion=1.$((PREVIOUS_MAVEN_CENTRAL_VERSION+1))
 echo "do we have more than one secret key?"
 gpg2 --list-keys
 echo "trying to delete keys ..."
-yes | gpg2 --delete-secret-key C71866D7
-yes | gpg2 --delete-key D39DC0E3
+gpg2 --batch --yes --delete-secret-and-public-key mpapis@gmail.com
+gpg2 --batch --yes --delete-secret-and-public-key michal.papis@toptal.com
 echo "do we still have more than one secret key?"
 gpg2 --list-keys
 
