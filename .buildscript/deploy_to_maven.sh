@@ -30,8 +30,9 @@ echo "do we have more than one secret key?"
 gpg2 --list-keys
 echo "trying to delete keys ..."
 gpg2 --batch --yes --delete-secret-and-public-key mpapis@gmail.com
-gpg2 --batch --yes --delete-secret-and-public-key michal.papis@toptal.com
+# gpg2 --batch --yes --delete-secret-and-public-key michal.papis@toptal.com
 echo "do we still have more than one secret key?"
+echo "trying to delete keys ..."
 gpg2 --list-keys
 
 echo "Starting deployment using maven deploy ..."
