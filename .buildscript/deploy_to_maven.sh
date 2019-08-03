@@ -26,13 +26,8 @@ PREVIOUS_MAVEN_CENTRAL_VERSION=0
 # and incrementing it
 mvn versions:set -DnewVersion=1.$((PREVIOUS_MAVEN_CENTRAL_VERSION+1))
 
-echo "do we have more than one secret key?"
-gpg2 --list-keys
-echo "trying to delete keys ..."
-gpg2 --batch --yes --delete-secret-and-public-key mpapis@gmail.com
-# gpg2 --batch --yes --delete-secret-and-public-key michal.papis@toptal.com
 echo "do we still have more than one secret key?"
-echo "trying to delete keys ..."
+# gpg2 --batch --yes --delete-secret-and-public-key mpapis@gmail.com
 gpg2 --list-keys
 
 echo "Starting deployment using maven deploy ..."
