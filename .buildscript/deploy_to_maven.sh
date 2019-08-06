@@ -31,5 +31,5 @@ echo "do we still have more than one secret key?"
 gpg2 --list-keys
 
 echo "Starting deployment using maven deploy ..."
-mvn -Prelease deploy --settings .buildscript/settings.xml -Dmaven.test.skip=true -Dgpg.passphrase=${GPG_PASSPHRASE} -Dgpg.keyname=${GPG_KEY_NAME} #-Dpgp.skip-true
+mvn -Prelease deploy --settings .buildscript/settings.xml -Dmaven.test.skip=true -Dgpg.keyname=${GPG_KEY_NAME} -Dgpg.passphrase=${PASSPHRASE} #-Dgpg.passphrase=${GPG_PASSPHRASE} #-Dpgp.skip-true
 echo "Well deployed!"
