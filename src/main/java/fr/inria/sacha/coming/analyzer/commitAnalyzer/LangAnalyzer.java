@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import fr.inria.sacha.coming.util.ConfigurationProperties;
 import fr.inria.sacha.gitanalyzer.interfaces.Commit;
 import fr.inria.sacha.gitanalyzer.interfaces.CommitAnalyzer;
 import fr.inria.sacha.gitanalyzer.interfaces.RepositoryP;
@@ -30,11 +31,17 @@ public class LangAnalyzer implements CommitAnalyzer {
 	/**
 	 * 
 	 */
-	private int commitWindows = 1;
+	public final String prefix = "v";
 
-	public LangAnalyzer(int commitWindows) {
+	private int commitWindows = 1;
+	public String output = "/tmp/";
+	public String cloc_path = "/usr/local/bin/cloc";
+
+	public LangAnalyzer(int commitWindows, String output, String cloc_path) {
 		super();
 		this.commitWindows = commitWindows;
+		this.output = output;
+		this.cloc_path = cloc_path;
 	}
 
 	public LangAnalyzer() {
@@ -42,10 +49,6 @@ public class LangAnalyzer implements CommitAnalyzer {
 	}
 
 	Logger log = Logger.getLogger(LangAnalyzer.class.getName());
-
-	public String output = "/tmp/";
-	public String prefix = "v";
-	public String cloc_path = "/usr/local/bin/cloc";
 
 	List<CommitInfo> commitsProcessed = new ArrayList<>();
 
@@ -79,16 +82,34 @@ public class LangAnalyzer implements CommitAnalyzer {
 		String repositoryPath = c.getRepository().getRepository().getDirectory().getAbsolutePath();
 		log.debug("Commit ->:  " + c.getName());
 		try {
-			runCommand(repositoryPath, "git reset --hard master".split(" "));
-			File diro = new File(output + prefix + c.getName());
-			diro.mkdirs();
-			runCommand(repositoryPath,
-					("git --work-tree=" + diro.getAbsolutePath() + " checkout " + c.getName() + " .").split(" "));
 
-			List<String> ls = runCommand(repositoryPath, new String[] { cloc_path, diro.getAbsolutePath() });
-			Map<String, Integer[]> langcommit = getLanguages(ls);
-			this.commitsProcessed.add(new CommitInfo(c.getName(), langcommit, this.commitsProcessed.size()));
-			FileUtils.deleteDirectory(diro);
+			if (ConfigurationProperties.getPropertyBoolean("checkoutcloc")) {
+				runCommand(repositoryPath, "git reset --hard master".split(" "));
+				File diro = new File(output + prefix + c.getName());
+				diro.mkdirs();
+				runCommand(repositoryPath,
+						("git --work-tree=" + diro.getAbsolutePath() + " checkout " + c.getName() + " .").split(" "));
+
+				List<String> ls = runCommand(repositoryPath, new String[] { cloc_path, diro.getAbsolutePath() });
+				Map<String, Integer[]> langcommit = getLanguages(ls);
+				this.commitsProcessed.add(new CommitInfo(c.getName(), langcommit, this.commitsProcessed.size() + 1));
+				FileUtils.deleteDirectory(diro);
+
+			} else {
+				// New cour
+				String[] cm = null;
+				if (cloc_path.trim().contains(" ")) {
+					String[] p = cloc_path.split(" ");
+					cm = new String[] { p[0], p[1], c.getName() };
+				} else {
+					cm = new String[] { cloc_path, c.getName() };
+				}
+				List<String> ls = runCommand(repositoryPath, cm);
+				Map<String, Integer[]> langcommit = getLanguages(ls);
+				this.commitsProcessed.add(new CommitInfo(c.getName(), langcommit, this.commitsProcessed.size() + 1));
+
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

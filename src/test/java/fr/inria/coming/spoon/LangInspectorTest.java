@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import org.json.simple.JSONObject;
@@ -56,17 +57,17 @@ public class LangInspectorTest extends GitRepository4Test {
 
 		CommitInfo c60b5 = getCommit(ci, "60b5");
 		assertTrue(c60b5.getStats().isEmpty());
-		assertEquals(0, c60b5.getNrCommit());
+		assertEquals(1, c60b5.getNrCommit());
 
 		CommitInfo cab71 = getCommit(ci, "ab71");
 
 		assertEquals(84, (int) cab71.getStats().get("Java")[3]);
-		assertEquals(1, cab71.getNrCommit());
+		assertEquals(2, cab71.getNrCommit());
 
 		CommitInfo cab4120 = getCommit(ci, "4120");
 
 		assertEquals(85, (int) cab4120.getStats().get("Java")[3]);
-		assertEquals(3, cab4120.getNrCommit());
+		assertEquals(4, cab4120.getNrCommit());
 
 		CommitInfo cabc6b1 = getCommit(ci, "c6b1");
 
@@ -106,6 +107,31 @@ public class LangInspectorTest extends GitRepository4Test {
 		assertEquals(10, (int) ce1ba4.getStats().get("Kotlin")[3]);
 		assertEquals(2, ce1ba4.getStats().keySet().size());
 
+		JSONObject json = analyzer.resultToJSON();
+		assertNotNull(json);
+
+		System.out.println(json);
+
+	}
+
+	@Test
+	public void testLangInspectorReal() {
+		// ConfigurationProperties.properties.setProperty("checkoutcloc", "true");
+		// d5a487298d55197329acaa2bbfcdd922555457c6
+		LangAnalyzer analyzer = new LangAnalyzer();
+		long init = (new Date()).getTime();
+		String repositoryPath = "/Users/matias/develop/kotlinresearch/dataset_kotlin_migration/POuLBITS-Android/";
+		if (repositoryPath == null || !(new File(repositoryPath)).exists()) {
+			System.out.println("Path not found " + repositoryPath);
+			return;
+		}
+		List<CommitInfo> ci = (List<CommitInfo>) analyzer.navigateRepo(repositoryPath, "master");
+		System.out.println("Results: ");
+		for (CommitInfo commitInfo : ci) {
+			System.out.println("--> " + commitInfo);
+		}
+		long end = (new Date()).getTime();
+		System.out.println("Time : " + (end - init) / 1000);
 		JSONObject json = analyzer.resultToJSON();
 		assertNotNull(json);
 

@@ -27,8 +27,8 @@ public class LangInspector {
 
 	public static void main(String[] args) throws IOException {
 
-		System.out
-				.println("usage arg 1: path to git repo, arg 2: branch, arg 3: commit slides (Default 1-all commits) ");
+		System.out.println(
+				"usage arg 1: path to git repo, arg 2: branch, arg 3: commit slides (Default 1-all commits) , arg 4: temp dir , arg 5: cloc path");
 		String repositoryPath, masterBranch;
 
 		repositoryPath = args[PARAM_GIT_PATH];
@@ -43,7 +43,15 @@ public class LangInspector {
 			System.out.println("Repo does not exist: " + repositoryPath);
 		}
 
-		LangAnalyzer analyzer = new LangAnalyzer(commitwindows);
+		String tmpDifS = (args.length > 3) ? args[3] : "/tmp/";
+
+		File tmpDir = new File(tmpDifS);
+		if (!tmpDir.exists())
+			tmpDir.mkdirs();
+
+		String clocpath = (args.length > 4) ? args[4] : "/usr/bin/perl /home/mmartinez/others/cloc/cloc";
+
+		LangAnalyzer analyzer = new LangAnalyzer(commitwindows, tmpDifS, clocpath);
 
 		List<CommitInfo> ci = (List<CommitInfo>) analyzer.navigateRepo(repositoryPath, masterBranch);
 		// System.out.println("Results: ");
